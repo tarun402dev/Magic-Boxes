@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Magic Boxes</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .box {
+      background-color: #444;
+      border-radius: 8px;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .box:hover {
+      background-color: #666;
+    }
+    .opened {
+      background-color: #4caf50 !important;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎁 Click a Magic Box 🎁</h1>
+  <div class="container" id="boxContainer"></div>
+
+  <script>
+    const messages = [
+      "You are amazing!", "Big surprise coming!", "Smile more!", "Luck is on your side!",
+      "You’re loved ❤️", "Magic is real 🔮", "Dream big!", "Keep going!",
+      "You shine bright ✨", "Be unstoppable!", "A gift is near 🎁", "Cheers to you!"
+    ];
+
+    const loggingURL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL"; // paste your script URL here
+
+    const container = document.getElementById('boxContainer');
+
+    messages.forEach((msg, i) => {
+      const box = document.createElement('div');
+      box.className = 'box';
+      box.textContent = `Box ${i + 1}`;
+      box.addEventListener('click', () => {
+        if (!box.classList.contains('opened')) {
+          box.classList.add('opened');
+          box.textContent = msg;
+
+          // Send log to Google Sheet
+          fetch(loggingURL, {
+            method: 'POST',
+            body: JSON.stringify({
+              box: `Box ${i + 1}`,
+              userAgent: navigator.userAgent
+            }),
+            headers: { 'Content-Type': 'application/json' }
+          }).then(r => console.log("Logged")).catch(err => console.error("Log failed", err));
+        }
+      });
+      container.appendChild(box);
+    });
+  </script>
+</body>
+</html>
